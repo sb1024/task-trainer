@@ -1,13 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <CheckBox
-        android:text="Task"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/check_box" />
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/check_box"/>
 
-</LinearLayout>
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:clickable="true"
+        android:layout_height="match_parent"
+        android:src="@mipmap/ic_launcher"
+        android:id="@+id/delete_x_icon"
+        android:layout_gravity="end"
+        android:layout_alignParentRight="true"
+        />
+
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/delete_x_icon"
+        android:layout_toRightOf="@+id/check_box"
+        android:layout_toEndOf="@+id/check_box">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/task_label"
+            android:textAlignment="viewStart"
+            android:gravity="start"
+            />
+    </FrameLayout>
+
+</RelativeLayout>

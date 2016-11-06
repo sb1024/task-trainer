@@ -18,13 +18,20 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity {
     final static String TAG = "HomeActivity";
     FloatingActionButton addTaskButton;
     ListView todoListView;
+    ImageButton deleteButton;
+    CheckBox checkBox;
+
+    ArrayList<String> taskNames = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +40,11 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        String[] values = new String[] { "Android List View",
-                "Adapter implementation",
-                "Simple List View In Android",
-                "Create List View Android",
-                "Android Example",
-                "List View Source Code",
-                "List View Array Adapter",
-                "Android Example List View"
-        };
+
 
         todoListView = (ListView)findViewById(R.id.todo_list);
-
-        todoListView.setAdapter(new CheckListAdapter(this, values));
+        String[] taskNameArray = new String[taskNames.size()];
+        todoListView.setAdapter(new CheckListAdapter(this, taskNames.toArray(taskNameArray)));
 
         // ListView Item Click Listener
         todoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -73,19 +72,28 @@ public class HomeActivity extends AppCompatActivity {
                 Log.d(TAG, "add new task: launch dialog");
 
                 final EditText taskEditText = new EditText(getApplicationContext());
-                AlertDialog dialog = new AlertDialog.Builder(getApplicationContext())
+
+                AlertDialog dialog = new AlertDialog.Builder(HomeActivity.this)
                         .setTitle("Add a new task")
-                        .setMessage("What do you want to do next?")
+                        .setMessage("Name the task:")
+
                         .setView(taskEditText)
                         .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String task = String.valueOf(taskEditText.getText());
+                                task = task.trim();
                                 Log.d(TAG, "Task to add: " + task);
+                                taskNames.add(task);
+                                String[] taskNameArray = new String[taskNames.size()];
+                                todoListView.setAdapter(new CheckListAdapter(HomeActivity.this, taskNames.toArray(taskNameArray)));
+
                             }
                         })
                         .setNegativeButton("Cancel", null)
                         .create();
+
+                dialog.setContentView(R.layout.dialog_add_task);
                 dialog.show();
             }
 
@@ -153,7 +161,8 @@ public class HomeActivity extends AppCompatActivity {
             View vi = convertView;
             if (vi == null)
                 vi = inflater.inflate(R.layout.item_todo, null);
-            CheckBox text = (CheckBox) vi.findViewById(R.id.check_box);
+            //CheckBox checkBox = (CheckBox) vi.findViewById(R.id.check_box);
+            EditText text = (EditText)vi.findViewById(R.id.task_label);
             text.setText(data[position]);
             return vi;
         }
