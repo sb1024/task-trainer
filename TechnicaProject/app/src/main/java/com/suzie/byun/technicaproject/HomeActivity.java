@@ -3,8 +3,10 @@ package com.suzie.byun.technicaproject;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -22,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,14 +35,14 @@ import com.suzie.byun.technicaproject.database.TaskContract;
 import com.suzie.byun.technicaproject.database.TaskDatabaseHelper;
 
 import java.util.ArrayList;
+import java.util.logging.Handler;
 
 public class HomeActivity extends AppCompatActivity {
     final static String TAG = "HomeActivity";
     FloatingActionButton addTaskButton;
     ListView todoListView;
+    Button nextPageButton;
 
-    //ArrayList<String> taskNames = new ArrayList<>();
-    //ArrayList<Long> taskIds = new ArrayList<>();
     ArrayList<Task> tasks = new ArrayList<>();
     private CheckListAdapter mAdapter;
 
@@ -54,7 +57,6 @@ public class HomeActivity extends AppCompatActivity {
 
         mHelper = new TaskDatabaseHelper(this);
 
-        updateUI();
 
         todoListView = (ListView)findViewById(R.id.todo_list);
         String[] taskNameArray = new String[tasks.size()];
@@ -81,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        //updateUI();
+        updateUI();
 
         addTaskButton = (FloatingActionButton)findViewById(R.id.fab);
         addTaskButton.setOnClickListener(new View.OnClickListener() {
@@ -118,6 +120,15 @@ public class HomeActivity extends AppCompatActivity {
                 dialog.show();
             }
 
+        });
+
+        nextPageButton = (Button)findViewById(R.id.next_button);
+        nextPageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent intent = new Intent(this, DisplayMessageActivity.class);
+                //startActivity(intent);
+            }
         });
     }
 
@@ -189,19 +200,32 @@ public class HomeActivity extends AppCompatActivity {
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     Log.d(TAG, "new Title: " + ((EditText)v).getText().toString());
-                    //data[position] = ((EditText)v).getText().toString();
+                    data[position] = new Task(((EditText)v).getText().toString(), false, position);
 
                 }
             });
+
+            ImageButton deleteButton = (ImageButton)vi.findViewById(R.id.delete_x_icon);
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "delete onClick called on position " + (position+1));
+                    //mHelper.deleteTask(position+1);
+                    mHelper.deleteTask(tasks.get(position).getName());
+                    updateUI();
+                }
+            });
+
             return vi;
         }
     }
 
-    private void updateUI() {
+    public void updateUI() {
         SQLiteDatabase db = mHelper.getReadableDatabase();
         Cursor cursor = db.query(TaskContract.TaskEntry.TABLE,
                 new String[]{TaskContract.TaskEntry._ID, TaskContract.TaskEntry.COL_TASK_TITLE},
                 null, null, null, null, null);
+        tasks.clear();
         while(cursor.moveToNext()) {
             int idx = cursor.getColumnIndex(TaskContract.TaskEntry.COL_TASK_TITLE);
             Log.d(TAG, "Task: " + cursor.getString(idx));
@@ -213,12 +237,15 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         if (mAdapter == null) {
-            String[] taskNameArray = new String[tasks.size()];
-            mAdapter = new CheckListAdapter(this, tasks.toArray(new Task[]{}));
+            //String[] taskNameArray = new String[tasks.size()];
+            //mAdapter = new CheckListAdapter(this, tasks.toArray(new Task[]{}));
         } else {
+            //mAdapter = new CheckListAdapter(this, tasks.toArray(new Task[]{}));
             mAdapter.notifyDataSetChanged();
         }
+        todoListView.setAdapter(new CheckListAdapter(HomeActivity.this, tasks.toArray(new Task[]{})));
         cursor.close();
         db.close();
+
     }
 }

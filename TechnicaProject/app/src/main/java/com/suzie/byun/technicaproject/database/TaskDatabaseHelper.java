@@ -5,13 +5,17 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.suzie.byun.technicaproject.HomeActivity;
+
 /**
  * Created by suzie on 11/5/2016.
  */
 
 public class TaskDatabaseHelper extends SQLiteOpenHelper {
+    Context context;
     public TaskDatabaseHelper(Context context) {
         super(context, TaskContract.DB_NAME, null, TaskContract.DB_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -42,12 +46,17 @@ public class TaskDatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public void deleteTask(String taskName, int done) {
+    //public void deleteTask(long id) {
+    public void deleteTask(String task) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(TaskContract.TaskEntry.COL_TASK_TITLE, taskName);
-        //values.put(TaskContract.TaskEntry.COL_TASK_DONE, done);
-        db.insertWithOnConflict(TaskContract.TaskEntry.TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+
+        db.delete(TaskContract.TaskEntry.TABLE,
+                //TaskContract.TaskEntry._ID + " = ?",
+                TaskContract.TaskEntry.COL_TASK_TITLE + " = ?",
+                //new String[]{Long.toString(id)});
+                new String[]{task});
+        ((HomeActivity)context).updateUI();
         db.close();
     }
 }
