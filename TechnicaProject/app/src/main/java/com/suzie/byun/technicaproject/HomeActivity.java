@@ -39,6 +39,8 @@ import java.util.logging.Handler;
 
 public class HomeActivity extends AppCompatActivity {
     final static String TAG = "HomeActivity";
+    final static String EXTRA_FINISHED_TASKS = "finished_tasks";
+    final static String EXTRA_UNFINISHED_TASKS = "unfinished_tasks";
     FloatingActionButton addTaskButton;
     ListView todoListView;
     Button nextPageButton;
@@ -106,7 +108,7 @@ public class HomeActivity extends AppCompatActivity {
                                 String task = String.valueOf(taskEditText.getText());
                                 task = task.trim();
                                 long id = mHelper.addTask(task, -1);
-                                Log.d(TAG, "Task added: " + task + ", db id: " + id);
+                                Log.d(TAG, "Task added: " + task + ", done? " + -1 + " db id: " + id);
                                 tasks.add(new Task(task, false, id));
                                 String[] taskNameArray = new String[tasks.size()];
                                 todoListView.setAdapter(new CheckListAdapter(HomeActivity.this, tasks.toArray(new Task[]{})));
@@ -127,6 +129,20 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, RewardActivity.class);
+                int finished = 0;
+                int unfinished = 0;
+
+                Log.d(TAG, "mAdapter.data: " + mAdapter.data);
+                for(Task task : ((CheckListAdapter)todoListView.getAdapter()).data) {
+                    Log.d(TAG, "Task: " + task.getName() + " is done? " + task.isDone());
+                    if(task.isDone()) {
+                        finished++;
+                    } else {
+                        unfinished++;
+                    }
+                }
+                intent.putExtra(EXTRA_FINISHED_TASKS, finished);
+                intent.putExtra(EXTRA_UNFINISHED_TASKS, unfinished);
                 startActivity(intent);
             }
         });
@@ -198,7 +214,15 @@ public class HomeActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     Log.d(TAG, "check box clicked @ position " + position );
-
+                    //change isDone status
+                    data[position] = new Task(data[position].getName(), !data[position].isDone(), position);
+                    if(data[position].isDone()) {
+                        mHelper.updateTask(data[position].getName(), 1);
+                        //updateUI();
+                    } else{
+                        mHelper.addTask(data[position].getName(), -1);
+                    }
+                    updateUI();
                 }
             });
             final EditText text = (EditText)vi.findViewById(R.id.task_label);
@@ -219,6 +243,7 @@ public class HomeActivity extends AppCompatActivity {
                     Log.d(TAG, "delete onClick called on position " + (position+1));
                     //mHelper.deleteTask(position+1);
                     mHelper.deleteTask(tasks.get(position).getName());
+
                     updateUI();
                 }
             });

@@ -24,8 +24,11 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.suzie.byun.technicaproject.database.TaskContract;
@@ -50,6 +53,17 @@ public class RewardActivity extends AppCompatActivity {
         //setSupportActionBar(toolbar);
         mHelper = new TaskDatabaseHelper(this);
 
+        Intent intent = getIntent();
+        int finished = intent.getIntExtra(HomeActivity.EXTRA_FINISHED_TASKS, 0);
+        int unfinished = intent.getIntExtra(HomeActivity.EXTRA_UNFINISHED_TASKS, 0);
+        Log.d(TAG, "finished count: " + finished);
+        Log.d(TAG, "unfinished count: " + unfinished);
+
+        GridView gridview = (GridView) findViewById(R.id.gridview);
+        ImageAdapter adapter = new ImageAdapter(this);
+        adapter.setPlantIds(finished);
+
+        gridview.setAdapter(adapter);
 
     }
 
@@ -77,24 +91,67 @@ public class RewardActivity extends AppCompatActivity {
     }
 
 
-    public void updateUI() {
-        SQLiteDatabase db = mHelper.getReadableDatabase();
-        Cursor cursor = db.query(TaskContract.TaskEntry.TABLE,
-                new String[]{TaskContract.TaskEntry._ID, TaskContract.TaskEntry.COL_TASK_TITLE},
-                null, null, null, null, null);
-        tasks.clear();
-        while(cursor.moveToNext()) {
-            int idx = cursor.getColumnIndex(TaskContract.TaskEntry.COL_TASK_TITLE);
-            Log.d(TAG, "Task: " + cursor.getString(idx));
-            Log.d(TAG, "Position: " + cursor.getPosition());
-            if(cursor.getString(idx) == null ) {
-                tasks.remove(cursor.getPosition());
-            }
-            tasks.add(cursor.getPosition(), new Task(cursor.getString(idx), false, cursor.getPosition()));
+    private class ImageAdapter extends BaseAdapter {
+        private Context mContext;
+
+        public ImageAdapter(Context c) {
+            mContext = c;
         }
 
-        cursor.close();
-        db.close();
+        public int getCount() {
+            return mPlantIds.length;
+        }
 
+        public Object getItem(int position) {
+            return null;
+        }
+
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        // create a new ImageView for each item referenced by the Adapter
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ImageView imageView;
+            if (convertView == null) {
+                // if it's not recycled, initialize some attributes
+                imageView = new ImageView(mContext);
+                imageView.setLayoutParams(new GridView.LayoutParams(250, 250));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setPadding(15, 15, 15, 15);
+            } else {
+                imageView = (ImageView) convertView;
+            }
+
+            imageView.setImageResource(mPlantIds[position]);
+            return imageView;
+        }
+
+        // references to our images
+        private Integer[] mPlantIds = {
+                R.drawable.plant_1, R.drawable.plant_1, R.drawable.plant_1,
+                R.drawable.plant_2, R.drawable.plant_2,
+                R.drawable.plant_3
+        };
+
+        public void setPlantIds(int finished) {
+            ArrayList<Integer> plantIds = new ArrayList<>();
+            int three = finished/15;
+            finished = finished%15;
+            for(int i = 0; i<three; i++) {
+                plantIds.add(R.drawable.plant_3);
+            }
+            int two = finished/10;
+            finished = finished%10;
+            for(int i = 0; i<two; i++) {
+                plantIds.add(R.drawable.plant_2);
+            }
+
+            int one = finished;
+            for(int i = 0; i<two; i++) {
+                plantIds.add(R.drawable.plant_1);
+            }
+
+        }
     }
 }
