@@ -45,9 +45,9 @@ public class RewardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_reward);
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
         mHelper = new TaskDatabaseHelper(this);
 
 
@@ -92,7 +92,7 @@ public class RewardActivity extends AppCompatActivity {
             }
             tasks.add(cursor.getPosition(), new Task(cursor.getString(idx), false, cursor.getPosition()));
         }
-        
+
         cursor.close();
         db.close();
 

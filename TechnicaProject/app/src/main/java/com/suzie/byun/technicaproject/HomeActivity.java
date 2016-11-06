@@ -126,8 +126,8 @@ public class HomeActivity extends AppCompatActivity {
         nextPageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(this, DisplayMessageActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent(HomeActivity.this, RewardActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -193,7 +193,14 @@ public class HomeActivity extends AppCompatActivity {
             View vi = convertView;
             if (vi == null)
                 vi = inflater.inflate(R.layout.item_todo, null);
-            //CheckBox checkBox = (CheckBox) vi.findViewById(R.id.check_box);
+            CheckBox checkBox = (CheckBox) vi.findViewById(R.id.check_box);
+            checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "check box clicked @ position " + position );
+
+                }
+            });
             final EditText text = (EditText)vi.findViewById(R.id.task_label);
             text.setText(data[position].getName());
             text.setOnFocusChangeListener(new View.OnFocusChangeListener() {
