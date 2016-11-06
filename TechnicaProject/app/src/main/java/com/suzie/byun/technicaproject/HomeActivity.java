@@ -112,7 +112,7 @@ public class HomeActivity extends AppCompatActivity {
                                 tasks.add(new Task(task, false, id));
                                 String[] taskNameArray = new String[tasks.size()];
                                 todoListView.setAdapter(new CheckListAdapter(HomeActivity.this, tasks.toArray(new Task[]{})));
-
+                                updateUI();
                             }
                         })
                         .setNegativeButton("Cancel", null)
