@@ -17,11 +17,11 @@
         android:layout_width="wrap_content"
         android:clickable="true"
         android:layout_height="match_parent"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/black_x"
         android:id="@+id/delete_x_icon"
         android:layout_gravity="end"
         android:layout_alignParentRight="true"
-        />
+        android:adjustViewBounds="false" />
 
 
     <FrameLayout
@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toLeftOf="@+id/delete_x_icon"
+        android:layout_toStartOf="@+id/delete_x_icon"
         android:layout_toRightOf="@+id/check_box"
         android:layout_toEndOf="@+id/check_box">
 
