@@ -215,14 +215,14 @@ public class HomeActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Log.d(TAG, "check box clicked @ position " + position );
                     //change isDone status
-                    data[position] = new Task(data[position].getName(), !data[position].isDone(), position);
+                    /*data[position] = new Task(data[position].getName(), !data[position].isDone(), position);
                     if(data[position].isDone()) {
                         mHelper.updateTask(data[position].getName(), 1);
                         //updateUI();
                     } else{
                         mHelper.addTask(data[position].getName(), -1);
                     }
-                    updateUI();
+                    updateUI();*/
                 }
             });
             final EditText text = (EditText)vi.findViewById(R.id.task_label);
